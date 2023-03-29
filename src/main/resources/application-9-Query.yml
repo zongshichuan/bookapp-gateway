@@ -1,0 +1,28 @@
+server:
+  port: 8040
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        service: gateway
+        namespace: 0f1188c0-c978-4c16-afc9-5d92c085b4bd
+    gateway:
+      routes:
+        - id: after_route
+          uri: lb://user-center
+          predicates:
+            # 当且仅当请求带有baz的参数，才会转发到用户微服务
+            # eg. 访问http://localhost:8040/users/1?baz=xx -> user-center的/users/1
+            - Query=baz
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,30 @@
+server:
+  port: 8040
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        service: gateway
+        namespace: 0f1188c0-c978-4c16-afc9-5d92c085b4bd
+    gateway:
+      routes:
+        - id: after_route
+          uri: lb://user-center
+          predicates:
+            # 当且仅当HTTP请求方法是GET时，才会转发用户微服务
+            # 如请求方法满足条件，访问http://localhost:8040/** -> user-center/**
+            # eg. 访问http://localhost:8040/users/1 -> user-center/users/1
+            - Method=GET
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
